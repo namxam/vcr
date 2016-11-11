@@ -53,26 +53,26 @@ export default class FilmList extends React.Component {
           return (
             <Flex ref={component => rowActive && this.scrollIntoView(component)} key={rowKey} direction='column' shrink={0}>
               <Flex id={rowKey} justifyContent='flex-start' shrink={0} className={style.Row}>
-                {row.map(({ id, title, poster }) => {
-                  let active = `${id}` === activeFilmId
-                  let isWatched = this.props.appState.isWatched(id)
+                {row.map(film => {
+                  let active = `${film.id}` === activeFilmId
+                  let isWatched = this.props.appState.isWatched(film.id)
 
                   return (
-                    <Link key={id}
+                    <Link key={film.id}
                       to={{
-                        pathname: `${basePath}/${id}`,
-                        state: { rowKey, basePath, title }
+                        pathname: `${basePath}/${film.id}`,
+                        state: { rowKey, basePath }
                       }}
                       className={style.MovieItem}
                       activeClassName={style.MovieItemActive}
                     >
-                      <Poster url={poster} shrink={rowActive} active={active}>
+                      <Poster url={film.poster} shrink={rowActive} active={active}>
                         {isWatched &&
                           <div className={style.Progress}>
                             <progress
                               className={style.ProgressWatched}
-                              max={this.props.appState.appState.films[id].duration}
-                              value={this.props.appState.appState.films[id].currentTime}
+                              max={this.props.appState.appState.films[film.id].duration}
+                              value={this.props.appState.appState.films[film.id].currentTime}
                             />
                           </div>
                         }
@@ -80,7 +80,7 @@ export default class FilmList extends React.Component {
                       {!active &&
                         <Flex alignItems='center' className={style.Title}>
                           <div className={style.ellipsis}>
-                            {title}
+                            {film.title}
                           </div>
                         </Flex>
                       }

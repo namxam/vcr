@@ -83,16 +83,16 @@ export default class WatchPage extends React.Component {
   ), 500)
 
   render() {
-    const { appState, streams, location: { state }, params: { chapterId }} = this.props
-    const { streamIndex } = this.state
-    const stream = this.props.streams[streamIndex]
+    const { streamIndex } = this.state;
+    const { appState, location: { state: { film }}, params: { chapterId }, streams } = this.props;
+    const stream = streams[streamIndex];
 
-    if (state.chapters) {
-      var nextChapter = state.chapters[
-        state.chapters.findIndex(({ id }, index) => id == chapterId) + 1
+    if (film.chapters) {
+      var nextChapter = film.chapters[
+        film.chapters.findIndex(({ id }, index) => id == chapterId) + 1
       ]
-      var previousChapter = state.chapters[
-        state.chapters.findIndex(({ id }, index) => id == chapterId) - 1
+      var previousChapter = film.chapters[
+        film.chapters.findIndex(({ id }, index) => id == chapterId) - 1
       ]
     }
 
@@ -108,9 +108,8 @@ export default class WatchPage extends React.Component {
     return (
       <Pinky promise={fetchPromise}>
         {({ resolved }) => resolved ? (
-
           <Player
-            src={`${resolved}#t=${appState.appState.films[state.filmId] && appState.appState.films[state.filmId].currentTime}`}
+            src={`${resolved}#t=${appState.appState.films[film.id] && appState.appState.films[film.id].currentTime || 0}`}
             vendor='video'
             onError={console.error}
             _onTimeUpdate={this.persistTime}
@@ -129,7 +128,7 @@ export default class WatchPage extends React.Component {
               <Titlebar
                 floating
                 key='titlebar'
-                center={state.title}
+                center={film.title}
                 right={<BackLink className={style.Quality} label='Close' />}
               />,
 
@@ -141,9 +140,9 @@ export default class WatchPage extends React.Component {
 
               <Flex key='bottom-controls' className={style.ControlsBottom} alignItems='center'>
                 <PlayPause />
-                {state.chapters && previousChapter && <Previous previousChapter={previousChapter} chapters={state.chapters} />}
+                {film.chapters && previousChapter && <Previous previousChapter={previousChapter} chapters={film.chapters} />}
                 <Progress />
-                {state.chapters && nextChapter && <Next nextChapter={nextChapter} chapters={state.chapters} />}
+                {film.chapters && nextChapter && <Next nextChapter={nextChapter} chapters={film.chapters} />}
                 <CurrentTime style={{ minWidth: 50, textAlign: 'center' }} />
                 <MuteUnmute />
                 <Volume />
@@ -155,18 +154,14 @@ export default class WatchPage extends React.Component {
           </Player>
         ) : (
           <Flex className={style.Loading} alignItems='center' justifyContent='center'>
-            <KeyHandler keyEventName='keydown' keyValue='Escape'
-              key='escape'
-              onKeyHandle={window.history.back}
-            />
-
+            <KeyHandler keyEventName='keydown' keyValue='Escape' key='escape' onKeyHandle={window.history.back} />
             <Titlebar
               floating
               key='titlebar'
               left={<select className={style.Quality} value={streamIndex} onChange={({ target: { value }}) => this.setState({ streamIndex: +value })}>
                 {streams.map((stream, index) => <option key={index} value={index}>{stream.quality}</option>)}
               </select>}
-              center={`${state.title} (Trying stream ${streamIndex + 1} of ${streams.length})`}
+              center={`${film.title} (Trying stream ${streamIndex + 1} of ${streams.length})`}
               right={<BackLink className={style.Quality} label='Close' />}
             />
             {streamIndex === streams.length - 1 ? <div>
