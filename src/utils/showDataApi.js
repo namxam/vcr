@@ -42,7 +42,7 @@ export function fetchEpisodeDetails(movie) {
   // bail if there aren't any detectable seasons
   if (!hasSeasons) {
     console.warn('Could not find any seasons for movie', title)
-    return { ...movie, hasSeasons }
+    return Promise.resolve({ ...movie, hasSeasons })
   }
 
   const chaptersWithSeason = chapters.map(addSeasonToChapter)

@@ -33,17 +33,17 @@ render(
     <Router history={hashHistory} render={props => <AsyncProps {...props} renderLoading={renderLoading} />}>
       <Route path="/" component={App}>
 
-        <IndexRedirect to="/browse/movie/popular" />
+        <IndexRedirect to="browse/movie/popular" />
 
-        <Route path="/search/:searchTerm" component={SearchPage}>
+        <Route path="search/:searchTerm" component={SearchPage}>
           <Route path=":filmId" component={FilmDetail} />
         </Route>
 
-        <Route path="/browse/:filmType/:sortBy" component={BrowsePage}>
+        <Route path="browse/:filmType/:sortBy" component={BrowsePage}>
           <Route path=":filmId" component={FilmDetail} />
         </Route>
 
-        <Route path="/watch/:chapterId" component={WatchPage} />
+        <Route path="watch/:chapterId" component={WatchPage} />
 
       </Route>
 
